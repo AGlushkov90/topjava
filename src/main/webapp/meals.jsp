@@ -6,11 +6,11 @@
     <title>Meals</title>
     <style>
         TABLE {
-            border-collapse: collapse; /* Убираем двойные линии между ячейками */
+            border-collapse: collapse;
         }
 
         TD, TH {
-            border: 1px solid black; /* Параметры рамки */
+            border: 1px solid black;
         }
     </style>
 </head>
@@ -21,10 +21,13 @@
 
 <table>
     <tbody>
+    <p><a href="meals?action=insert">Add Meal</a></p>
     <tr>
         <td style="text-align:center;">Date</td>
         <td style="text-align:center;">Description</td>
         <td style="text-align:center;">Calories</td>
+        <td style="text-align:center;"></td>
+        <td style="text-align:center;"></td>
     </tr>
     <c:forEach items="${mealsTo}" var="cell">
         <tr style="color:${cell.isExcess() ? 'red' : 'green'}">
@@ -32,6 +35,10 @@
             <td style="text-align:center;"><fmt:formatDate pattern="dd.MM.yyyy HH:mm" value="${parsedDateTime}"/></td>
             <td style="text-align:center;">${cell.getDescription()}</td>
             <td style="text-align:center;">${cell.getCalories()}</td>
+            <td style="text-align:center;"><a
+                    href="meals?action=edit&mealId=<c:out value="${cell.getId()}"/>">Update</a></td>
+            <td style="text-align:center;"><a
+                    href="meals?action=delete&mealId=<c:out value="${cell.getId()}"/>">Delete</a></td>
         </tr>
     </c:forEach>
     </tbody>
