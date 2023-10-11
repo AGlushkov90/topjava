@@ -17,7 +17,7 @@
 <body>
 <h3><a href="index.html">Home</a></h3>
 <hr>
-<jsp:useBean id="mealsTo" class="java.util.ArrayList" scope="request"/>
+<h2>Meals</h2>
 
 <table>
     <tbody>
@@ -29,16 +29,14 @@
         <td style="text-align:center;"></td>
         <td style="text-align:center;"></td>
     </tr>
-    <c:forEach items="${mealsTo}" var="cell">
-        <tr style="color:${cell.isExcess() ? 'red' : 'green'}">
-            <fmt:parseDate value="${cell.getDateTime()}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDateTime" type="both"/>
-            <td style="text-align:center;"><fmt:formatDate pattern="dd.MM.yyyy HH:mm" value="${parsedDateTime}"/></td>
-            <td style="text-align:center;">${cell.getDescription()}</td>
-            <td style="text-align:center;">${cell.getCalories()}</td>
-            <td style="text-align:center;"><a
-                    href="meals?action=edit&mealId=<c:out value="${cell.getId()}"/>">Update</a></td>
-            <td style="text-align:center;"><a
-                    href="meals?action=delete&mealId=<c:out value="${cell.getId()}"/>">Delete</a></td>
+    <c:forEach items="${mealsTo}" var="meal">
+        <tr style="color:${meal.excess ? 'red' : 'green'}; text-align:center">
+            <fmt:parseDate value="${meal.dateTime}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDateTime" type="both"/>
+            <td><fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateTime}"/></td>
+            <td>${meal.description}</td>
+            <td>${meal.calories}</td>
+            <td><a href="meals?action=edit&mealId=${meal.id}">Update</a></td>
+            <td><a href="meals?action=delete&mealId=${meal.id}">Delete</a></td>
         </tr>
     </c:forEach>
     </tbody>

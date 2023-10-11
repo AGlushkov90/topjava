@@ -2,13 +2,17 @@ package ru.javawebinar.topjava.dao;
 
 import ru.javawebinar.topjava.model.Meal;
 
+import java.util.List;
+
 
 public interface MealDao {
-    void addMeal(Meal meal);
+    Meal add(Meal meal);
 
-    void deleteMeal(Integer id);
+    void delete(int id);
 
-    void updateMeal(Meal meal);
+    Meal update(Meal meal);
 
-    Meal getMealById(Integer mealId);
+    Meal getById(int id);
+
+    List<Meal> getAll();
 }
