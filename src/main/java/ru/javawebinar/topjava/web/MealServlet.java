@@ -29,26 +29,19 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String forward;
-        String action = request.getParameter("action");
-        if (action == null) {
-            log.debug("open meals, action is null");
-            forward = LIST_MEAL;
-            request.setAttribute("mealsTo", MealsUtil.filteredByStreams(dao.getAll()));
-            request.getRequestDispatcher(forward).forward(request, response);
-            return;
-        }
+        String action = request.getParameter("action") == null ? "" : request.getParameter("action");
         int mealId;
         switch (action) {
             case ("delete"):
                 mealId = Integer.parseInt(request.getParameter("mealId"));
-                log.debug("delete meal id: " + mealId);
+                log.debug("delete meal id: {}", mealId);
                 dao.delete(mealId);
                 response.sendRedirect(getServletContext().getContextPath() + "/meals");
                 return;
             case ("edit"):
                 forward = INSERT_OR_EDIT;
                 mealId = Integer.parseInt(request.getParameter("mealId"));
-                log.debug("edit meal id: " + mealId);
+                log.debug("edit meal id: {}", mealId);
                 Meal meal = dao.getById(mealId);
                 request.setAttribute("meal", meal);
                 break;
@@ -59,7 +52,7 @@ public class MealServlet extends HttpServlet {
             default:
                 log.debug("open meals");
                 forward = LIST_MEAL;
-                request.setAttribute("mealsTo", MealsUtil.filteredByStreams(dao.getAll()));
+                request.setAttribute("mealsTo", MealsUtil.filteredByStreams(dao.getAll(), MealsUtil.CALORIES_PER_DAY));
                 break;
         }
         request.getRequestDispatcher(forward).forward(request, response);
@@ -73,11 +66,11 @@ public class MealServlet extends HttpServlet {
         String mealId = request.getParameter("mealId");
         if (mealId == null || mealId.isEmpty()) {
             dao.add(meal);
-            log.debug("added meal id: " + meal.getId());
+            log.debug("added meal id: {}", meal.getId());
         } else {
             meal.setId(Integer.parseInt(mealId));
             dao.update(meal);
-            log.debug("edited meal id: " + mealId);
+            log.debug("edited meal id: {}", mealId);
         }
         response.sendRedirect(getServletContext().getContextPath() + "/meals");
     }
