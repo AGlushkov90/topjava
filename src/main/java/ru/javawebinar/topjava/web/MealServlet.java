@@ -29,7 +29,7 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String forward;
-        String action = request.getParameter("action") == null ? "" : request.getParameter("action");
+        String action = String.valueOf(request.getParameter("action"));
         int mealId;
         switch (action) {
             case ("delete"):

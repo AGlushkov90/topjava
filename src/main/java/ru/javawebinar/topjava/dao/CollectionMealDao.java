@@ -15,14 +15,14 @@ public class CollectionMealDao implements MealDao {
     {
         counter = new AtomicInteger(0);
         meals = new ConcurrentHashMap<>();
-        List<Meal> mealList = new ArrayList<>(Arrays.asList(
+        List<Meal> mealList = Arrays.asList(
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 23, 59, 59), "Ужин", 410)));
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 23, 59, 59), "Ужин", 410));
         mealList.forEach(this::add);
     }
 
@@ -40,11 +40,7 @@ public class CollectionMealDao implements MealDao {
 
     @Override
     public Meal update(Meal meal) {
-        if (meals.get(meal.getId()) == null) {
-            return null;
-        }
-        meals.put(meal.getId(), meal);
-        return meal;
+        return meals.replace(meal.getId(), meal);
     }
 
     @Override
