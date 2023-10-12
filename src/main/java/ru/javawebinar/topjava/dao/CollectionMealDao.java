@@ -40,7 +40,7 @@ public class CollectionMealDao implements MealDao {
 
     @Override
     public Meal update(Meal meal) {
-        return meals.replace(meal.getId(), meal);
+        return meals.computeIfPresent(meal.getId(), (key, value) -> meal);
     }
 
     @Override
