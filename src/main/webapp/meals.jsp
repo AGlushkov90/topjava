@@ -14,6 +14,23 @@
         .excess {
             color: red;
         }
+
+        dl {
+            background: none repeat scroll 0 0 #FAFAFA;
+            margin: 8px 0;
+            padding: 0;
+        }
+
+        dt {
+            display: inline-block;
+            width: 170px;
+        }
+
+        dd {
+            display: inline-block;
+            margin-left: 8px;
+            vertical-align: top;
+        }
     </style>
 </head>
 <body>
@@ -21,6 +38,19 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
+    <form method="Post" action="meals">
+        <dl>
+            От даты (включая):
+            <dd><input type="date" value="${startDate}" name="startDate"></dd>
+            До даты (включая):
+            <dd><input type="date" value="${endDate}" name="endDate"></dd>
+            От времени (включая):
+            <dd><input type="time" value="${startTime}" name="startTime"></dd>
+            До времени (исключая):
+            <dd><input type="time" value="${endTime}" name="endTime"></dd>
+            <button type="submit">Отфильтровать</button>
+        </dl>
+    </form>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
@@ -34,7 +64,7 @@
         </tr>
         </thead>
         <c:forEach items="${requestScope.meals}" var="meal">
-            <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealTo"/>
+            <jsp:useBean id="meal" type="ru.javawebinar.topjava.to.MealTo"/>
             <tr class="${meal.excess ? 'excess' : 'normal'}">
                 <td>
                         <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
