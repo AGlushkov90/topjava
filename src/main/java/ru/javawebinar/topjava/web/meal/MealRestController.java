@@ -10,19 +10,16 @@ import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
 @Controller
-
 public class MealRestController {
-
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private final MealService service;
 
     public MealRestController(MealService service) {
@@ -31,13 +28,13 @@ public class MealRestController {
 
     public List<MealTo> getAll() {
         log.info("getAll");
-        return MealsUtil.getTos(service.getAll(SecurityUtil.authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return MealsUtil.getTos(service.getAll(SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay());
     }
 
-    public Meal createWithLocation(Meal meal) {
+    public Meal create(Meal meal) {
         log.info("create {}", meal);
         checkNew(meal);
-        return service.createWithLocation(meal);
+        return service.create(meal, SecurityUtil.authUserId());
     }
 
     public Meal get(int id) {
@@ -48,7 +45,7 @@ public class MealRestController {
     public void update(Meal meal, int id) {
         log.info("update {} with id={}", meal, id);
         assureIdConsistent(meal, id);
-        service.update(meal);
+        service.update(meal, SecurityUtil.authUserId());
     }
 
     public void delete(int id) {
@@ -56,14 +53,13 @@ public class MealRestController {
         service.delete(id, SecurityUtil.authUserId());
     }
 
-    public List<MealTo> getBetween(String endDate, String endTime, String startDate, String startTime) {
+    public List<MealTo> getBetween(LocalDate endDate, LocalTime endTime, LocalDate startDate, LocalTime startTime) {
         log.info("getBetween {}-{} {}-{}", endDate, endTime, startDate, startTime);
-        final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime localStartTime = startTime.equals("") ? LocalTime.MIN : LocalTime.parse(startTime, TIME_FORMATTER);
-        LocalTime localEndTime = endTime.equals("") ? LocalTime.MAX : LocalTime.parse(endTime, TIME_FORMATTER);
+        startDate = startDate == null ? LocalDate.MIN : startDate;
+        endDate = endDate == null ? LocalDate.MAX : endDate;
+        startTime = startTime == null ? LocalTime.MIN : startTime;
+        endTime = endTime == null ? LocalTime.MAX : endTime;
         return MealsUtil.getFilteredTos(service.getBetween(endDate, startDate, SecurityUtil.authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY,
-                localStartTime, localEndTime);
+                startTime, endTime);
     }
-
-
 }

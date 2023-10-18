@@ -38,16 +38,17 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
-    <form method="Post" action="meals">
+    <form method="get" action="meals">
         <dl>
             От даты (включая):
-            <dd><input type="date" value="${startDate}" name="startDate"></dd>
+            <dd><input type="date" value="${param.startDate}" name="startDate"></dd>
             До даты (включая):
-            <dd><input type="date" value="${endDate}" name="endDate"></dd>
+            <dd><input type="date" value="${param.endDate}" name="endDate"></dd>
             От времени (включая):
-            <dd><input type="time" value="${startTime}" name="startTime"></dd>
+            <dd><input type="time" value="${param.startTime}" name="startTime"></dd>
             До времени (исключая):
-            <dd><input type="time" value="${endTime}" name="endTime"></dd>
+            <dd><input type="time" value="${param.endTime}" name="endTime"></dd>
+            <input hidden type="text" value="filter" name="action">
             <button type="submit">Отфильтровать</button>
         </dl>
     </form>

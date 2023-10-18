@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
@@ -18,26 +20,26 @@ public class MealService {
     }
 
     public List<Meal> getAll(int userId) {
-        return (List<Meal>) repository.getAll(userId);
+        return new ArrayList<>(repository.getAll(userId));
     }
 
-    public Meal createWithLocation(Meal meal) {
-        return repository.save(meal);
+    public Meal create(Meal meal, int userId) {
+        return repository.save(meal, userId);
     }
 
-    public Meal get(int id, int idUser) {
-        return checkNotFoundWithId(repository.get(id, idUser), id);
+    public Meal get(int id, int userId) {
+        return checkNotFoundWithId(repository.get(id, userId), id);
     }
 
-    public void update(Meal meal) {
-        checkNotFoundWithId(repository.save(meal), meal.getId());
+    public void update(Meal meal, int userId) {
+        checkNotFoundWithId(repository.save(meal, userId), meal.getId());
     }
 
-    public void delete(int id, int idUser) {
-        checkNotFoundWithId(repository.delete(id, idUser), id);
+    public void delete(int id, int userId) {
+        checkNotFoundWithId(repository.delete(id, userId), id);
     }
 
-    public List<Meal> getBetween(String endDate, String startDate, int userId) {
-        return (List<Meal>) repository.getBetween(endDate, startDate, userId);
+    public List<Meal> getBetween(LocalDate endDate, LocalDate startDate, int userId) {
+        return new ArrayList<>(repository.getBetween(endDate, startDate, userId));
     }
 }

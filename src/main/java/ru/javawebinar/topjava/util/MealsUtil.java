@@ -24,7 +24,10 @@ public class MealsUtil {
             new Meal(LocalDateTime.of(2023, Month.OCTOBER, 31, 0, 0), "Еда на граничное значение", 100, 1),
             new Meal(LocalDateTime.of(2023, Month.OCTOBER, 31, 10, 0), "Завтрак", 1000, 1),
             new Meal(LocalDateTime.of(2023, Month.OCTOBER, 31, 13, 0), "Обед", 500, 1),
-            new Meal(LocalDateTime.of(2023, Month.OCTOBER, 31, 20, 0), "Ужин", 410, 1)
+            new Meal(LocalDateTime.of(2023, Month.OCTOBER, 31, 20, 0), "Ужин", 410, 1),
+            new Meal(LocalDateTime.of(2023, Month.OCTOBER, 31, 10, 0), "Обед юзер2", 410, 2),
+            new Meal(LocalDateTime.of(2023, Month.OCTOBER, 31, 16, 0), "завтрак юзер2", 410, 2),
+            new Meal(LocalDateTime.of(2023, Month.OCTOBER, 31, 23, 0), "Полдник юзер2", 410, 2)
     );
 
     public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay) {

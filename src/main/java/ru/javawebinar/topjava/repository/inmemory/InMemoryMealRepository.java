@@ -7,12 +7,12 @@ import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Repository
@@ -21,18 +21,18 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.meals.forEach(this::save);
+        MealsUtil.meals.forEach(meal -> save(meal, meal.getUserId()));
     }
 
     @Override
-    public Meal save(Meal meal) {
+    public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             repository.put(meal.getId(), meal);
             return meal;
         }
         // handle case: update, but not present in storage
-        if (!isMealCurrentUser(meal.getId(), meal.getUserId())) {
+        if (!isMealCurrentUser(meal.getId(), userId)) {
             return null;
         }
         return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
@@ -55,27 +55,25 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Collection<Meal> getAll(int userId) {
-        return repository.values().stream().filter(meal -> meal.getUserId().equals(userId))
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed()).collect(Collectors.toList());
+    public List<Meal> getAll(int userId) {
+        return getByPredicate(meal -> meal.getUserId().equals(userId));
     }
 
     @Override
-    public Collection<Meal> getBetween(String endDate, String startDate, int userId) {
-        final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate localStartDate = startDate.equals("") ? LocalDate.MIN : LocalDate.parse(startDate, DATE_TIME_FORMATTER);
-        LocalDate localEndDate = endDate.equals("") ? LocalDate.MAX : LocalDate.parse(endDate, DATE_TIME_FORMATTER);
-        return getAll(userId).stream().filter(meal -> DateTimeUtil.isBetweenHalfOpen(meal.getDate(), localStartDate, localEndDate))
-                .collect(Collectors.toList());
+    public List<Meal> getBetween(LocalDate endDate, LocalDate startDate, int userId) {
+        return getByPredicate(meal -> DateTimeUtil.isBetween(meal.getDate(), startDate, endDate)
+                && meal.getUserId().equals(userId));
     }
 
     private boolean isMealCurrentUser(Integer id, Integer userId) {
-        for (Map.Entry<Integer, Meal> entry : repository.entrySet()) {
-            if (entry.getKey().equals(id) && entry.getValue().getUserId().equals(userId)) {
-                return true;
-            }
-        }
-        return false;
+        return repository.get(id).getUserId().equals(userId);
+    }
+
+    private List<Meal> getByPredicate(Predicate<Meal> filter) {
+        return repository.values().stream()
+                .filter(filter)
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                .collect(Collectors.toList());
     }
 }
 

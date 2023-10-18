@@ -2,24 +2,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Java Enterprise (Topjava)</title>
-    <script>
-        function userId() {
-            window.open("meals?userId=" + selectUser.value);
-        }
-    </script>
 </head>
 <body>
 <h3>Проект <a href="https://github.com/JavaWebinar/topjava" target="_blank">Java Enterprise (Topjava)</a></h3>
 <hr>
 <li><a href="users">Users</a></li>
-<li><a href=# onclick="userId()">Meals</a></li>
+<li><a href="meals">Meals</a></li>
 <br>
-<div class="select">
-    <select id="selectUser">
-        <option value="1" selected>user</option>
-        <option value="2">admin</option>
-    </select>
-</div>
+<form action="users" method="post">
+    <div class="select">
+        <select name="userId">
+            <option value="1" selected>user</option>
+            <option value="2">admin</option>
+        </select>
+    </div>
+    <p><input type="submit" value="Отправить"></p>
+</form>
 </body>
 </html>
 
