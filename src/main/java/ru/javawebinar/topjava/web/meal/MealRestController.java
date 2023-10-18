@@ -11,6 +11,7 @@ import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -42,9 +43,9 @@ public class MealRestController {
         return service.get(id, SecurityUtil.authUserId());
     }
 
-    public void update(Meal meal, int id) {
-        log.info("update {} with id={}", meal, id);
-        assureIdConsistent(meal, id);
+    public void update(Meal meal) {
+        log.info("update {}", meal);
+        assureIdConsistent(meal, meal.getId());
         service.update(meal, SecurityUtil.authUserId());
     }
 
@@ -59,7 +60,16 @@ public class MealRestController {
         endDate = endDate == null ? LocalDate.MAX : endDate;
         startTime = startTime == null ? LocalTime.MIN : startTime;
         endTime = endTime == null ? LocalTime.MAX : endTime;
-        return MealsUtil.getFilteredTos(service.getBetween(endDate, startDate, SecurityUtil.authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY,
+        return MealsUtil.getFilteredTos(service.getBetween(endDate, startDate, SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay(),
                 startTime, endTime);
+    }
+
+    public void createUpdate(Integer id, LocalDateTime dateTime, String description, Integer calories) {
+        Meal meal = new Meal(id, dateTime, description, calories, null);
+        if (meal.isNew()) {
+            create(meal);
+        } else {
+            update(meal);
+        }
     }
 }

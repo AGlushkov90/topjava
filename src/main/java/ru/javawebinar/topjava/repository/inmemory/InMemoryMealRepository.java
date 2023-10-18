@@ -28,19 +28,21 @@ public class InMemoryMealRepository implements MealRepository {
     public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
+            meal.setUserId(userId);
             repository.put(meal.getId(), meal);
             return meal;
         }
         // handle case: update, but not present in storage
-        if (!isMealCurrentUser(meal.getId(), userId)) {
+        if (!isMealBelongsToCurrentUser(meal.getId(), userId)) {
             return null;
         }
+        meal.setUserId(userId);
         return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
     public boolean delete(int id, int userId) {
-        if (!isMealCurrentUser(id, userId)) {
+        if (!isMealBelongsToCurrentUser(id, userId)) {
             return false;
         }
         return repository.remove(id) != null;
@@ -48,29 +50,35 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        if (!isMealCurrentUser(id, userId)) {
+        Meal meal = repository.get(id);
+        if (!isMealBelongsToCurrentUser(meal, userId)) {
             return null;
         }
-        return repository.get(id);
+        return meal;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return getByPredicate(meal -> meal.getUserId().equals(userId));
+        return getByPredicate(meal -> true, userId);
     }
 
     @Override
     public List<Meal> getBetween(LocalDate endDate, LocalDate startDate, int userId) {
-        return getByPredicate(meal -> DateTimeUtil.isBetween(meal.getDate(), startDate, endDate)
-                && meal.getUserId().equals(userId));
+        return getByPredicate(meal -> DateTimeUtil.isBetween(meal.getDate(), startDate, endDate), userId);
     }
 
-    private boolean isMealCurrentUser(Integer id, Integer userId) {
-        return repository.get(id).getUserId().equals(userId);
+    private boolean isMealBelongsToCurrentUser(int id, int userId) {
+        Meal meal = repository.get(id);
+        return isMealBelongsToCurrentUser(meal, userId);
     }
 
-    private List<Meal> getByPredicate(Predicate<Meal> filter) {
+    private boolean isMealBelongsToCurrentUser(Meal meal, int userId) {
+        return meal != null && meal.getUserId().equals(userId);
+    }
+
+    private List<Meal> getByPredicate(Predicate<Meal> filter, int userId) {
         return repository.values().stream()
+                .filter(meal -> meal.getUserId().equals(userId))
                 .filter(filter)
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());

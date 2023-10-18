@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
@@ -39,18 +38,13 @@ public class MealServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
-
-        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                LocalDateTime.parse(request.getParameter("dateTime")),
-                request.getParameter("description"),
-                Integer.parseInt(request.getParameter("calories")), SecurityUtil.authUserId());
-
-        log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        if (meal.isNew()) {
-            mealRestController.create(meal);
-        } else {
-            mealRestController.update(meal, Integer.parseInt(id));
-        }
+        String dateTime = request.getParameter("dateTime");
+        String description = request.getParameter("description");
+        String calories = request.getParameter("calories");
+        mealRestController.createUpdate(id.isEmpty() ? null : Integer.valueOf(id),
+                dateTime.isEmpty() ? null : LocalDateTime.parse(dateTime),
+                description.isEmpty() ? null : description,
+                calories.isEmpty() ? null : Integer.valueOf(calories));
         response.sendRedirect("meals");
     }
 
@@ -78,12 +72,10 @@ public class MealServlet extends HttpServlet {
                 String endTime = request.getParameter("endTime");
                 String startDate = request.getParameter("startDate");
                 String startTime = request.getParameter("startTime");
-                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDate localStartDate = startDate.isEmpty() ? null : LocalDate.parse(startDate, dateTimeFormatter);
-                LocalDate localEndDate = endDate.isEmpty() ? null : LocalDate.parse(endDate, dateTimeFormatter);
-                DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-                LocalTime localStartTime = startTime.isEmpty() ? null : LocalTime.parse(startTime, timeFormatter);
-                LocalTime localEndTime = endTime.isEmpty() ? null : LocalTime.parse(endTime, timeFormatter);
+                LocalDate localStartDate = startDate.isEmpty() ? null : LocalDate.parse(startDate);
+                LocalDate localEndDate = endDate.isEmpty() ? null : LocalDate.parse(endDate);
+                LocalTime localStartTime = startTime.isEmpty() ? null : LocalTime.parse(startTime);
+                LocalTime localEndTime = endTime.isEmpty() ? null : LocalTime.parse(endTime);
                 request.setAttribute("meals", mealRestController.getBetween(
                         localEndDate, localEndTime, localStartDate, localStartTime));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
