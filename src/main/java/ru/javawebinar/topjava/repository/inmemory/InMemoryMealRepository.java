@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
-    private final Map<Integer, Meal> repository = new ConcurrentHashMap<>();
+    private final Map<Integer, Map<Integer, Meal>> repository = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
@@ -29,28 +29,38 @@ public class InMemoryMealRepository implements MealRepository {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             meal.setUserId(userId);
-            repository.put(meal.getId(), meal);
+            Map<Integer, Meal> mapMeals = repository.getOrDefault(userId, new ConcurrentHashMap<>());
+            mapMeals.put(meal.getId(), meal);
+            repository.put(userId, mapMeals);
             return meal;
         }
-        // handle case: update, but not present in storage
-        if (!isMealBelongsToCurrentUser(meal.getId(), userId)) {
+        Map<Integer, Meal> mapMeals = repository.get(userId);
+        if (!isExistUser(mapMeals) || !isMealBelongsToCurrentUser(meal.getId(), userId, mapMeals)) {
             return null;
         }
+        // handle case: update, but not present in storage
         meal.setUserId(userId);
-        return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        mapMeals.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        repository.computeIfPresent(userId, (currentUserId, oldMapMeals) -> mapMeals);
+        return meal;
     }
 
     @Override
     public boolean delete(int id, int userId) {
-        if (!isMealBelongsToCurrentUser(id, userId)) {
+        Map<Integer, Meal> mapMeals = repository.get(userId);
+        if (!isExistUser(mapMeals) || !isMealBelongsToCurrentUser(id, userId, mapMeals)) {
             return false;
         }
-        return repository.remove(id) != null;
+        return mapMeals.remove(id) != null;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        Meal meal = repository.get(id);
+        Map<Integer, Meal> mapMeals = repository.get(userId);
+        if (!isExistUser(mapMeals)) {
+            return null;
+        }
+        Meal meal = mapMeals.get(id);
         if (!isMealBelongsToCurrentUser(meal, userId)) {
             return null;
         }
@@ -67,9 +77,8 @@ public class InMemoryMealRepository implements MealRepository {
         return getByPredicate(meal -> DateTimeUtil.isBetween(meal.getDate(), startDate, endDate), userId);
     }
 
-    private boolean isMealBelongsToCurrentUser(int id, int userId) {
-        Meal meal = repository.get(id);
-        return isMealBelongsToCurrentUser(meal, userId);
+    private boolean isMealBelongsToCurrentUser(int id, int userId, Map<Integer, Meal> mapMeals) {
+        return isMealBelongsToCurrentUser(mapMeals.get(id), userId);
     }
 
     private boolean isMealBelongsToCurrentUser(Meal meal, int userId) {
@@ -77,11 +86,14 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     private List<Meal> getByPredicate(Predicate<Meal> filter, int userId) {
-        return repository.values().stream()
-                .filter(meal -> meal.getUserId().equals(userId))
+        return repository.get(userId).values().stream()
                 .filter(filter)
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
+    }
+
+    private boolean isExistUser(Map<Integer, Meal> mapMeals) {
+        return mapMeals != null;
     }
 }
 

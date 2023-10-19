@@ -11,7 +11,6 @@ import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -62,14 +61,5 @@ public class MealRestController {
         endTime = endTime == null ? LocalTime.MAX : endTime;
         return MealsUtil.getFilteredTos(service.getBetween(endDate, startDate, SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay(),
                 startTime, endTime);
-    }
-
-    public void createUpdate(Integer id, LocalDateTime dateTime, String description, Integer calories) {
-        Meal meal = new Meal(id, dateTime, description, calories, null);
-        if (meal.isNew()) {
-            create(meal);
-        } else {
-            update(meal);
-        }
     }
 }
