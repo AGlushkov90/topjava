@@ -17,23 +17,25 @@ public class MealTestData {
     public static final int MEAL7_ID = START_SEQ + 10;
     public static final int MEAL8_ID = START_SEQ + 11;
     public static final int NOT_FOUND = 11;
-    public static final Meal meal = new Meal(MEAL_ID, LocalDateTime.parse("2023-10-30T10:00:00"), "Завтрак юзер", 500);
-    public static final Meal meal1 = new Meal(MEAL1_ID, LocalDateTime.parse("2023-10-30T13:00:00"), "Обед юзер", 1000);
-    public static final Meal meal2 = new Meal(MEAL2_ID, LocalDateTime.parse("2023-10-30T20:00:00"), "Ужин юзер", 500);
-    public static final Meal meal3 = new Meal(MEAL3_ID, LocalDateTime.parse("2023-10-31T00:00:00"), "Еда на граничное значение юзер", 100);
-    public static final Meal meal4 = new Meal(MEAL4_ID, LocalDateTime.parse("2023-10-31T10:00:00"), "Завтрак юзер", 1000);
-    public static final Meal meal5 = new Meal(MEAL5_ID, LocalDateTime.parse("2023-10-31T13:00:00"), "Обед юзер", 500);
-    public static final Meal meal6 = new Meal(MEAL6_ID, LocalDateTime.parse("2023-10-31T20:00:00"), "Ужин юзер", 410);
-    public static final Meal meal7 = new Meal(MEAL7_ID, LocalDateTime.parse("2023-10-29T10:00:00"), "Завтрак админ", 500);
-    public static final Meal meal8 = new Meal(MEAL8_ID, LocalDateTime.parse("2023-10-31T12:00:00"), "ужин админ", 700);
+    public static final Meal mealUser = new Meal(MEAL_ID, LocalDateTime.of(2023, 10, 30, 10, 0), "Завтрак юзер", 500);
+    public static final Meal meal1User = new Meal(MEAL1_ID, LocalDateTime.of(2023, 10, 30, 13, 0), "Обед юзер", 1000);
+    public static final Meal meal2User = new Meal(MEAL2_ID, LocalDateTime.of(2023, 10, 30, 20, 0), "Ужин юзер", 500);
+    public static final Meal meal3User = new Meal(MEAL3_ID, LocalDateTime.of(2023, 10, 31, 0, 0), "Еда на граничное значение юзер", 100);
+    public static final Meal meal4User = new Meal(MEAL4_ID, LocalDateTime.of(2023, 10, 31, 10, 0), "Завтрак юзер", 1000);
+    public static final Meal meal5User = new Meal(MEAL5_ID, LocalDateTime.of(2023, 10, 31, 13, 0), "Обед юзер", 500);
+    public static final Meal meal6User = new Meal(MEAL6_ID, LocalDateTime.of(2023, 10, 31, 20, 0), "Ужин юзер", 410);
+    public static final Meal mealAdmin = new Meal(MEAL7_ID, LocalDateTime.of(2023, 10, 29, 10, 0), "Завтрак админ", 500);
+    public static final Meal meal1Admin = new Meal(MEAL8_ID, LocalDateTime.of(2023, 10, 31, 12, 0), "ужин админ", 700);
 
     public static Meal getUpdate() {
-        Meal update = new Meal(meal);
+        Meal update = new Meal(mealUser);
+        update.setDateTime(LocalDateTime.of(2023, 11, 01, 0, 0));
+        update.setDescription("Update meal");
         update.setCalories(1000);
         return update;
     }
 
     public static Meal getNew() {
-        return new Meal(null, LocalDateTime.MIN, "обед админ", 300);
+        return new Meal(null, LocalDateTime.of(2023, 11, 01, 10, 0), "обед админ", 300);
     }
 }
