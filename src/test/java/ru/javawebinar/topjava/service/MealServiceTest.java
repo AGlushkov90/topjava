@@ -18,14 +18,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-db.xml"
+        "classpath:spring/spring-db.xml",
+        "classpath:spring/spring.xml"
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
@@ -43,7 +43,7 @@ public class MealServiceTest {
     @Test
     public void get() {
         Meal meal = service.get(MEAL_ID, USER_ID);
-        asserMatch(meal, mealUser);
+        asserMatch(meal, userMeal);
     }
 
     @Test
@@ -66,13 +66,13 @@ public class MealServiceTest {
     public void getBetweenInclusive() {
         List<Meal> all = service.getBetweenInclusive(LocalDate.of(2023, 10, 29),
                 LocalDate.of(2023, 10, 30), ADMIN_ID);
-        asserMatch(all, Collections.singletonList(mealAdmin));
+        asserMatch(all, Collections.singletonList(adminMeal));
     }
 
     @Test
     public void getAll() {
         List<Meal> all = service.getAll(ADMIN_ID);
-        asserMatch(all, Arrays.asList(meal1Admin, mealAdmin));
+        asserMatch(all, Arrays.asList(adminMeal1, adminMeal));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class MealServiceTest {
     @Test
     public void duplicateDateTimeCreate() {
         assertThrows(DataAccessException.class, () ->
-                service.create(new Meal(null, mealUser.getDateTime(),
+                service.create(new Meal(null, userMeal.getDateTime(),
                         "ужин юзер", 100), USER_ID));
     }
 
@@ -113,9 +113,5 @@ public class MealServiceTest {
     public void updateUserIDNotFound() {
         Meal updated = MealTestData.getUpdate();
         assertThrows(NotFoundException.class, () -> service.update(updated, ADMIN_ID));
-    }
-
-    private void asserMatch(Object actual, Object expected) {
-        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 }
