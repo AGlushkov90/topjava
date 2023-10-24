@@ -64,9 +64,15 @@ public class MealServiceTest {
 
     @Test
     public void getBetweenInclusive() {
-        List<Meal> all = service.getBetweenInclusive(LocalDate.of(2023, 10, 29),
-                LocalDate.of(2023, 10, 30), ADMIN_ID);
-        asserMatch(all, Collections.singletonList(adminMeal));
+        List<Meal> all = service.getBetweenInclusive(LocalDate.of(2023, 10, 31),
+                LocalDate.of(2023, 10, 31), USER_ID);
+        asserMatch(all, Arrays.asList(userMeal6, userMeal5, userMeal4, userMeal3));
+    }
+
+    @Test
+    public void getWithEmptyRange() {
+        List<Meal> all = service.getBetweenInclusive(null, null, ADMIN_ID);
+        asserMatch(all, Arrays.asList(adminMeal1, adminMeal));
     }
 
     @Test
@@ -100,17 +106,17 @@ public class MealServiceTest {
     }
 
     @Test
-    public void deletedUserIDNotFound() {
+    public void deletedByAnotherUser() {
         assertThrows(NotFoundException.class, () -> service.delete(MEAL_ID, ADMIN_ID));
     }
 
     @Test
-    public void getUserIDNotFound() {
+    public void getByAnotherUser() {
         assertThrows(NotFoundException.class, () -> service.get(MEAL_ID, ADMIN_ID));
     }
 
     @Test
-    public void updateUserIDNotFound() {
+    public void updateByAnotherUser() {
         Meal updated = MealTestData.getUpdate();
         assertThrows(NotFoundException.class, () -> service.update(updated, ADMIN_ID));
     }
