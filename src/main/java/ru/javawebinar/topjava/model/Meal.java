@@ -11,6 +11,8 @@ import java.time.LocalTime;
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id = :user_id"),
         @NamedQuery(name = Meal.GET, query = "SELECT m FROM Meal m WHERE m.id=:id AND m.user.id = :user_id"),
         @NamedQuery(name = Meal.GET_ALL, query = "SELECT m FROM Meal m WHERE m.user.id = :user_id ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.UPDATE, query = "UPDATE Meal m SET m.description = ?1, m.calories = ?2, m.dateTime = ?3 " +
+                "WHERE m.id = ?4 AND m.user.id = ?5"),
         @NamedQuery(name = Meal.GET_BETWEEN_HALF_OPEN,
                 query = "SELECT m FROM Meal m WHERE m.user.id = ?1 AND m.dateTime >= ?2 AND m.dateTime < ?3" +
                         " ORDER BY m.dateTime DESC")
@@ -23,6 +25,7 @@ public class Meal extends AbstractBaseEntity {
     public static final String DELETE = "meal.delete";
     public static final String GET = "meal.get";
     public static final String GET_ALL = "meal.getAll";
+    public static final String UPDATE = "meal.update";
     public static final String GET_BETWEEN_HALF_OPEN = "meal.getBetweenHalfOpen";
 
     @Column(name = "date_time", nullable = false)
