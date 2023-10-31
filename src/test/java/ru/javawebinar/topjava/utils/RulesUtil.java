@@ -6,6 +6,8 @@ import org.junit.runner.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 public class RulesUtil {
 
     private static final Logger log = LoggerFactory.getLogger(RulesUtil.class);
@@ -15,7 +17,7 @@ public class RulesUtil {
         @Override
         protected void finished(long nanos, Description description) {
             log.info("Time: {}", nanos);
-            result.append("Name: ").append(description.getMethodName()).append(" time: ").append(nanos).append('\n');
+            result.append(String.format("%-50s %s ms", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos))).append('\n');
         }
     };
 

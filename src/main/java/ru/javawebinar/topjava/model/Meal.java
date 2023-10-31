@@ -1,8 +1,7 @@
 package ru.javawebinar.topjava.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -11,13 +10,10 @@ import java.time.LocalTime;
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id = :user_id"),
         @NamedQuery(name = Meal.GET, query = "SELECT m FROM Meal m WHERE m.id=:id AND m.user.id = :user_id"),
         @NamedQuery(name = Meal.GET_ALL, query = "SELECT m FROM Meal m WHERE m.user.id = :user_id ORDER BY m.dateTime DESC"),
-        @NamedQuery(name = Meal.UPDATE, query = "UPDATE Meal m SET m.description = ?1, m.calories = ?2, m.dateTime = ?3 " +
-                "WHERE m.id = ?4 AND m.user.id = ?5"),
         @NamedQuery(name = Meal.GET_BETWEEN_HALF_OPEN,
                 query = "SELECT m FROM Meal m WHERE m.user.id = ?1 AND m.dateTime >= ?2 AND m.dateTime < ?3" +
                         " ORDER BY m.dateTime DESC")
 })
-
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(name = "meal_unique_user_datetime_idx", columnNames = {"user_id", "date_time"}))
 public class Meal extends AbstractBaseEntity {
@@ -25,7 +21,6 @@ public class Meal extends AbstractBaseEntity {
     public static final String DELETE = "meal.delete";
     public static final String GET = "meal.get";
     public static final String GET_ALL = "meal.getAll";
-    public static final String UPDATE = "meal.update";
     public static final String GET_BETWEEN_HALF_OPEN = "meal.getBetweenHalfOpen";
 
     @Column(name = "date_time", nullable = false)
@@ -34,14 +29,17 @@ public class Meal extends AbstractBaseEntity {
 
     @Column(nullable = false)
     @NotBlank
+    @Size(min = 2, max = 120)
     private String description;
 
     @Column(nullable = false)
-    @NotNull
+    @Min(value = 10)
+    @Max(value = 5000)
     private int calories;
 
+    @NotNull
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public Meal() {
