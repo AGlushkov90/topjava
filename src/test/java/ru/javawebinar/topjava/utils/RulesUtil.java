@@ -16,7 +16,7 @@ public class RulesUtil {
     public static final Stopwatch STOP_WATCH = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            log.info("Time: {}", nanos);
+            log.info("{} ms", TimeUnit.NANOSECONDS.toMillis(nanos));
             result.append(String.format("%-50s %s ms", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos))).append('\n');
         }
     };
@@ -24,12 +24,12 @@ public class RulesUtil {
     public static final ExternalResource EXTERNAL_RESOURCE = new ExternalResource() {
         @Override
         protected void before() throws Throwable {
-            result = new StringBuilder();
+            result = new StringBuilder().append('\n');
         }
 
         @Override
         protected void after() {
-            System.out.println(result);
+            log.info("{}", result);
         }
     };
 }
