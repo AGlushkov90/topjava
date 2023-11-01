@@ -16,8 +16,9 @@ public class RulesUtil {
     public static final Stopwatch STOP_WATCH = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            log.info("{} ms", TimeUnit.NANOSECONDS.toMillis(nanos));
-            result.append(String.format("%-50s %s ms", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos))).append('\n');
+            long millis = TimeUnit.NANOSECONDS.toMillis(nanos);
+            log.info("{} ms", millis);
+            result.append(String.format("%-50s %s ms", description.getMethodName(), millis)).append('\n');
         }
     };
 
