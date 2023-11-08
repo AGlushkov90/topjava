@@ -31,7 +31,7 @@ import static ru.javawebinar.topjava.UserTestData.user;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public abstract class AbstractUserTest extends AbstractBaseTest {
     @Autowired
-    private UserService service;
+    protected UserService service;
 
     @Autowired
     private CacheManager cacheManager;

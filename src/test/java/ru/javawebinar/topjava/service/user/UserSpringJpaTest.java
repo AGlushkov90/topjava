@@ -1,7 +1,11 @@
 package ru.javawebinar.topjava.service.user;
 
+import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.ActiveDbProfileResolver;
+import ru.javawebinar.topjava.model.User;
+
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 @ActiveProfiles(value = "datajpa", resolver = ActiveDbProfileResolver.class)
 public class UserSpringJpaTest extends AbstractUserTest {
@@ -49,5 +53,10 @@ public class UserSpringJpaTest extends AbstractUserTest {
     @Override
     public void getAll() {
         super.getAll();
+    }
+
+    @Test
+    public void getWithMeals() {
+        User user = service.getWithMeals(USER_ID);
     }
 }
