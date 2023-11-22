@@ -1,16 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <jsp:include page="fragments/headTag.jsp"/>
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
-    <h3><a href="index.html">Home</a></h3>
-    <hr>
-    <h2>${action.equals("create") ? 'Create meal' : 'Edit meal'}</h2>
+    <h2>${request.getParameter("id") != null ? 'Edit meal' : 'Create meal'}</h2>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
-    <form method="post" action="save">
+    <form method="post" action="${pageContext.request.contextPath}/meals">
         <input type="hidden" name="id" value="${meal.id}">
         <dl>
             <dt>DateTime:</dt>

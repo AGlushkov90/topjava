@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.MealsUtil;
-import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -30,32 +29,35 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 @Controller
 @RequestMapping("/meals")
 public class JspMealController {
-    private static final Logger log = LoggerFactory.getLogger(MealRestController.class);
+    private static final Logger log = LoggerFactory.getLogger(JspMealController.class);
 
     @Autowired
     private MealService service;
 
-
     @GetMapping
-    public String getAll(HttpServletRequest request, Model model) {
+    public String getAll(Model model) {
         int userId = SecurityUtil.authUserId();
-        if ("filter".equals(request.getParameter("action"))) {
-            LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
-            LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
-            LocalTime startTime = parseLocalTime(request.getParameter("startTime"));
-            LocalTime endTime = parseLocalTime(request.getParameter("endTime"));
-            log.info("getBetween dates({} - {}) time({} - {}) for user {}", startDate, endDate, startTime, endTime, userId);
-            List<Meal> mealsDateFiltered = service.getBetweenInclusive(startDate, endDate, userId);
-            model.addAttribute("meals", MealsUtil.getFilteredTos(mealsDateFiltered,
-                    SecurityUtil.authUserCaloriesPerDay(), startTime, endTime));
-        } else {
-            log.info("getAll for user {}", userId);
-            model.addAttribute("meals", MealsUtil.getTos(service.getAll(userId), SecurityUtil.authUserCaloriesPerDay()));
-        }
+        log.info("getAll for user {}", userId);
+        model.addAttribute("meals", MealsUtil.getTos(service.getAll(userId), SecurityUtil.authUserCaloriesPerDay()));
         return "meals";
     }
 
-    @PostMapping("/save")
+    @GetMapping("/filter")
+    public String getBetween(HttpServletRequest request, Model model) {
+        int userId = SecurityUtil.authUserId();
+        LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
+        LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
+        LocalTime startTime = parseLocalTime(request.getParameter("startTime"));
+        LocalTime endTime = parseLocalTime(request.getParameter("endTime"));
+        log.info("getBetween dates({} - {}) time({} - {}) for user {}", startDate, endDate, startTime, endTime, userId);
+        List<Meal> mealsDateFiltered = service.getBetweenInclusive(startDate, endDate, userId);
+        model.addAttribute("meals", MealsUtil.getFilteredTos(mealsDateFiltered,
+                SecurityUtil.authUserCaloriesPerDay(), startTime, endTime));
+        return "meals";
+
+    }
+
+    @PostMapping
     public String save(HttpServletRequest request) {
         Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
