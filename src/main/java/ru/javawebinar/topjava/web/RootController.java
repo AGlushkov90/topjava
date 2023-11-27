@@ -51,4 +51,10 @@ public class RootController {
                 MealsUtil.getTos(mealService.getAll(SecurityUtil.authUserId()), SecurityUtil.authUserCaloriesPerDay()));
         return "meals";
     }
+
+    @GetMapping("/style")
+    public String getStyle() {
+        log.info("style");
+        return "style";
+    }
 }

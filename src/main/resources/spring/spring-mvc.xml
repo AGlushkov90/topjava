@@ -28,9 +28,23 @@
     <!--  all resources inside folder src/main/webapp/resources are mapped so they can be referred to inside JSP files -->
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+    <bean class="ru.javawebinar.topjava.web.MyViewResolver">
+        <property name="cssResolver" ref="cssResolver"/>
+        <property name="jspResolver" ref="jspResolver"/>
+    </bean>
+
+    <bean  id="cssResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
+        <property name="prefix" value="/resources/css/" />
+        <property name="suffix" value=".css" />
+        <property name="order" value="1" />
+    </bean>
+
+    <bean id="jspResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
           p:prefix="/WEB-INF/jsp/"
-          p:suffix=".jsp"/>
+          p:suffix=".jsp"
+    p:order ="0"/>
+
 
 <!--
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
