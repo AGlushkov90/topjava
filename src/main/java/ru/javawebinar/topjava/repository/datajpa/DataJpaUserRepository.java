@@ -46,4 +46,9 @@ public class DataJpaUserRepository implements UserRepository {
     public User getWithMeals(int id) {
         return crudRepository.getWithMeals(id);
     }
+
+    @Override
+    public void changeActive(int id, boolean active) {
+        crudRepository.changeActive(id, active);
+    }
 }

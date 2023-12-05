@@ -8,7 +8,9 @@ function makeEditable(datatableApi) {
             deleteRow($(this).closest('tr').attr("id"));
         }
     });
-
+    $(".checkbox").click(function () {
+        checkboxUser($(this).closest('tr').attr("id"), $(this).find(':checkbox')[0].checked);
+    });
     $(document).ajaxError(function (event, jqXHR, options, jsExc) {
         failNoty(jqXHR);
     });
@@ -32,8 +34,33 @@ function deleteRow(id) {
     });
 }
 
+function checkboxUser(id, active) {
+    $.ajax({
+        type: "POST",
+        url: ctx.ajaxUrl + "changeActive",
+        data: {
+            id: id,
+            active: active
+        }
+    })
+    updateTable();
+}
+
 function updateTable() {
     $.get(ctx.ajaxUrl, function (data) {
+        ctx.datatableApi.clear().rows.add(data).draw();
+    });
+}
+
+function updateTableWithFilter() {
+    const startDate = document.getElementById("startDate").value;
+    const endDate = document.getElementById("endDate").value;
+    const startTime = document.getElementById("startTime").value;
+    const endTime = document.getElementById("endTime").value;
+    $.ajax({
+        url: `${ctx.ajaxUrl}filter?startDate=${startDate}&endDate=${endDate}&startTime=${startTime}&endTime=${endTime}`,
+        type: "GET"
+    }).done(function (data) {
         ctx.datatableApi.clear().rows.add(data).draw();
     });
 }
@@ -77,4 +104,12 @@ function failNoty(jqXHR) {
         layout: "bottomRight"
     });
     failedNote.show()
+}
+
+function resetFilter() {
+    document.getElementById("startDate").value = null;
+    document.getElementById("endDate").value = null;
+    document.getElementById("startTime").value = null;
+    document.getElementById("endTime").value = null;
+    updateTable();
 }
