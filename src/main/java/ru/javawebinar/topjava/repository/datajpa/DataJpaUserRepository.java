@@ -48,7 +48,7 @@ public class DataJpaUserRepository implements UserRepository {
     }
 
     @Override
-    public void changeActive(int id, boolean active) {
-        crudRepository.changeActive(id, active);
+    public boolean changeActive(int id, boolean active) {
+        return crudRepository.changeActive(id, active) != 0;
     }
 }

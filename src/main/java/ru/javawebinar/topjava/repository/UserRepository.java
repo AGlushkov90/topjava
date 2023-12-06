@@ -23,7 +23,7 @@ public interface UserRepository {
         throw new UnsupportedOperationException();
     }
 
-    default void changeActive(int id, boolean active) {
+    default boolean changeActive(int id, boolean active) {
         throw new UnsupportedOperationException();
     }
 }

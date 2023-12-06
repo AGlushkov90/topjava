@@ -54,7 +54,7 @@ public abstract class AbstractUserController {
         return service.getWithMeals(id);
     }
 
-    public void changeActive(Integer id, Boolean active){
+    public void changeActive(int id, boolean active) {
         log.info("changeActive {} for user {}", active, id);
         service.changeActive(id, active);
     }

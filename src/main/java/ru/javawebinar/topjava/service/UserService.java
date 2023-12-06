@@ -58,6 +58,6 @@ public class UserService {
 
     @CacheEvict(value = "users", allEntries = true)
     public void changeActive(int id, boolean active) {
-        repository.changeActive(id, active);
+        checkNotFoundWithId(repository.changeActive(id, active), id);
     }
 }

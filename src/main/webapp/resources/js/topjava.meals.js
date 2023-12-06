@@ -33,9 +33,26 @@ $(function () {
             "order": [
                 [
                     0,
-                    "asc"
-                ]
-            ]
+                    "desc"
+                ]]
         })
     );
 });
+
+function updateTableWithFilter() {
+    const startDate = document.getElementById("startDate").value;
+    const endDate = document.getElementById("endDate").value;
+    const startTime = document.getElementById("startTime").value;
+    const endTime = document.getElementById("endTime").value;
+    $.ajax({
+        url: `${ctx.ajaxUrl}filter?startDate=${startDate}&endDate=${endDate}&startTime=${startTime}&endTime=${endTime}`,
+        type: "GET"
+    }).done(function (data) {
+        ctx.datatableApi.clear().rows.add(data).draw();
+    });
+}
+
+function resetFilter() {
+    document.getElementById("filterForm").reset();
+    updateTable();
+}

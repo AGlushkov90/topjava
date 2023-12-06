@@ -44,4 +44,34 @@ $(function () {
             ]
         })
     );
+    // $(".checkbox").onclick = function (e)
+    // {
+    //     checkboxUser($(this).closest('tr').attr("id"), $(this).find(':checkbox')[0].checked);
+    // }
+    //
+    // $(".checkbox").toArray().forEach(function(item, i, arr) {
+    //     alert( i + ": " + item + " (массив:" + arr + ")" );
+    // });
+
+    $(".checkbox").change(function () {
+        // checkboxUser($(this).closest('tr').attr("id"), $(this).find(':checkbox')[0].checked);
+        checkboxUser($(this));
+    });
 });
+
+function checkboxUser(cell) {
+    const checked = cell.find(':checkbox')[0].checked;
+    $.ajax({
+        type: "POST",
+        url: ctx.ajaxUrl + "change-active",
+        data: {
+            id: cell.closest('tr').attr("id"),
+            active: checked
+        }
+    })
+    if (checked) {
+        cell.closest('tr').css('color', 'black');
+    } else {
+        cell.closest('tr').css('color', 'red');
+    }
+}

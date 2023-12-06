@@ -34,10 +34,10 @@ public class AdminUIController extends AbstractUserController {
     }
 
     @Override
-    @PostMapping("/changeActive")
+    @PostMapping("/change-active")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changeActive(@RequestParam Integer id,
-                             @RequestParam Boolean active) {
+    public void changeActive(@RequestParam int id,
+                             @RequestParam boolean active) {
         super.changeActive(id, active);
     }
 }

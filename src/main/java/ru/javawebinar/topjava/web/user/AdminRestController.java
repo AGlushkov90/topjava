@@ -61,4 +61,16 @@ public class AdminRestController extends AbstractUserController {
     public User getWithMeals(@PathVariable int id) {
         return super.getWithMeals(id);
     }
+
+
+    @PostMapping("/change-active")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changeActive(@RequestBody UserActive userActive) {
+        super.changeActive(userActive.id, userActive.active);
+    }
+
+    public static class UserActive {
+        private int id;
+        private boolean active;
+    }
 }
